@@ -8,6 +8,7 @@ import { MyApp } from './app.component';
 import { LoginPage } from '../pages/login/login';
 import { SignupPage } from '../pages/signup/signup';
 import firebase from 'firebase';
+import { FeedPage } from '../pages/feed/feed';
 var config = {
   apiKey: "AIzaSyB9eiuN5GwxRpiceU_2X9U_D2kXRvzHccw",
   authDomain: "cloudfunction-9d075.firebaseapp.com",
@@ -21,7 +22,8 @@ firebase.initializeApp(config)
   declarations: [
     MyApp,
     LoginPage,
-    SignupPage
+    SignupPage,
+    FeedPage
   ],
   imports: [
     BrowserModule,
@@ -31,7 +33,8 @@ firebase.initializeApp(config)
   entryComponents: [
     MyApp,
     LoginPage,
-    SignupPage
+    SignupPage,
+    FeedPage
   ],
   providers: [
     StatusBar,

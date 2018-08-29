@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {  NavController, NavParams,ToastController, AlertController } from 'ionic-angular';
 import firebase from 'firebase';
+import { FeedPage } from '../feed/feed';
 
 @Component({
   selector: 'page-signup',
@@ -32,7 +33,7 @@ export class SignupPage {
             {
               text:"OK",
               handler:()=>{
-
+                this.navCtrl.setRoot(FeedPage)
               }
             }
           ]

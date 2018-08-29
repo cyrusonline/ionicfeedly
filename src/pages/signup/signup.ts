@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {  NavController, NavParams } from 'ionic-angular';
+import {  NavController, NavParams,ToastController, AlertController } from 'ionic-angular';
 import firebase from 'firebase';
 
 @Component({
@@ -11,7 +11,8 @@ export class SignupPage {
   name:string = "";
   email:string = "";
   password:string = "";
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public toastCtrl:ToastController, 
+    public alertCtrl:AlertController ) {
   }
 
   signup(){
@@ -24,11 +25,29 @@ export class SignupPage {
         photoURL:""
       }).then(()=>{
         console.log('profile updated')
+        this.alertCtrl.create({
+          title:'Account Created',
+          message:'Your account has been created successfully',
+          buttons:[
+            {
+              text:"OK",
+              handler:()=>{
+
+              }
+            }
+          ]
+        }).present();
+      }).catch((err)=>{
+        console.log(err)
       })
 
 
     }).catch((err)=>{
       console.log(err)
+      this.toastCtrl.create({
+        message:err.message,
+        duration:3000
+      }).present();
     })
   }
 

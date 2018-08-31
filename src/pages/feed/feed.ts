@@ -10,24 +10,94 @@ export class FeedPage {
   
   text:string = "";
   posts:any[] = [];
+  pageSize: number = 10;
+  cursor:any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
-    this.getPosts();
+   this.getPosts()
   }
+
+  // getPosts(){
+
+  //   firebase.firestore().collection("posts").orderBy("created", "desc").limit(this.pageSize).get()
+  //   .then((docs) => {
+
+  //     docs.forEach((doc) => {
+  //       this.posts.push(doc);
+  //     })
+
+  //     this.cursor = this.posts[this.posts.length - 1];
+
+  //     console.log(this.posts)
+
+  //   }).catch((err) => {
+  //     console.log(err)
+  //   })
+  // }
 
   getPosts(){
     this.posts = []
-    firebase.firestore().collection('posts').orderBy("created","desc").get()
+    // firebase.firestore().collection('posts').orderBy("created","desc").limit(this.pageSize).get()
+    firebase.firestore().collection('posts').orderBy("created","desc").limit(this.pageSize).get()
     .then(docs=>{
       docs.forEach(doc=>{
         this.posts.push(doc);
       })
+
+      this.cursor = this.posts[this.posts.length - 1];
+      console.log('the cursor from LOAD POSTS is ',this.posts.length - 1);
       console.log(this.posts)
     }).catch(err=>{
       console.log(err)
     })
   }
 
+  // loadMorePosts(event){
+
+  //   firebase.firestore().collection("posts").orderBy("created", "desc").startAfter(this.cursor).limit(this.pageSize).get()
+  //   .then((docs) => {
+
+  //     docs.forEach((doc) => {
+  //       this.posts.push(doc);
+  //     })
+
+  //     console.log(this.posts)
+
+  //     if(docs.size < this.pageSize){
+  //       // all documents have been loaded
+  //       event.enable(false);
+  //     } else {
+  //       event.complete();
+  //       this.cursor = this.posts[this.posts.length - 1];
+  //     }
+
+  //   }).catch((err) => {
+  //     console.log(err)
+  //   })
+
+  // }
+  loadMorePosts(event){
+   
+    firebase.firestore().collection('posts').orderBy("created","desc").startAfter(this.cursor).limit(this.pageSize).get()
+    .then(docs=>{
+      docs.forEach(doc=>{
+        this.posts.push(doc);
+      })
+      console.log(this.posts)
+      if (docs.size < this.pageSize) {
+        event.enable(false)
+      }else{
+        //tell the loading is complete
+        event.complete()
+        this.cursor = this.posts[this.posts.length-1]
+        console.log('the cursor from load more post is ',this.posts.length - 1);
+      }
+
+
+    }).catch(err=>{
+      console.log(err)
+    })
+  }
   post(){
     console.log('post')
     firebase.firestore().collection('posts').add({

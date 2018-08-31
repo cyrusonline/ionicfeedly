@@ -23,21 +23,21 @@ export class FeedPage {
   getPosts(){
     this.posts = []
     let query = firebase.firestore().collection('posts').orderBy("created","desc").limit(this.pageSize);
-    query.onSnapshot((snapshot)=>{
-     let changedDocs = snapshot.docChanges();
-     changedDocs.forEach(change=>{
-        if (change.type == "added") {
+    // query.onSnapshot((snapshot)=>{
+    //  let changedDocs = snapshot.docChanges();
+    //  changedDocs.forEach(change=>{
+    //     if (change.type == "added") {
           
-        }
-        if (change.type == "modified") {
-          console.log("Document with id"+change.doc.id + "has been modified");
-        }
-        if (change.type == "removed") {
+    //     }
+    //     if (change.type == "modified") {
+    //       console.log("Document with id"+change.doc.id + "has been modified");
+    //     }
+    //     if (change.type == "removed") {
           
-        }
-     })
+    //     }
+    //  })
 
-    })
+    // })
     query.get()
     .then(docs=>{
       docs.forEach(doc=>{

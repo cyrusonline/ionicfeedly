@@ -12,33 +12,33 @@ export class FeedPage {
   posts:any[] = [];
   pageSize: number = 10;
   cursor:any;
+  infiniteEvent:any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
    this.getPosts()
   }
 
-  // getPosts(){
-
-  //   firebase.firestore().collection("posts").orderBy("created", "desc").limit(this.pageSize).get()
-  //   .then((docs) => {
-
-  //     docs.forEach((doc) => {
-  //       this.posts.push(doc);
-  //     })
-
-  //     this.cursor = this.posts[this.posts.length - 1];
-
-  //     console.log(this.posts)
-
-  //   }).catch((err) => {
-  //     console.log(err)
-  //   })
-  // }
+  
 
   getPosts(){
     this.posts = []
-    // firebase.firestore().collection('posts').orderBy("created","desc").limit(this.pageSize).get()
-    firebase.firestore().collection('posts').orderBy("created","desc").limit(this.pageSize).get()
+    let query = firebase.firestore().collection('posts').orderBy("created","desc").limit(this.pageSize);
+    query.onSnapshot((snapshot)=>{
+     let changedDocs = snapshot.docChanges();
+     changedDocs.forEach(change=>{
+        if (change.type == "added") {
+          
+        }
+        if (change.type == "modified") {
+          console.log("Document with id"+change.doc.id + "has been modified");
+        }
+        if (change.type == "removed") {
+          
+        }
+     })
+
+    })
+    query.get()
     .then(docs=>{
       docs.forEach(doc=>{
         this.posts.push(doc);
@@ -52,30 +52,7 @@ export class FeedPage {
     })
   }
 
-  // loadMorePosts(event){
-
-  //   firebase.firestore().collection("posts").orderBy("created", "desc").startAfter(this.cursor).limit(this.pageSize).get()
-  //   .then((docs) => {
-
-  //     docs.forEach((doc) => {
-  //       this.posts.push(doc);
-  //     })
-
-  //     console.log(this.posts)
-
-  //     if(docs.size < this.pageSize){
-  //       // all documents have been loaded
-  //       event.enable(false);
-  //     } else {
-  //       event.complete();
-  //       this.cursor = this.posts[this.posts.length - 1];
-  //     }
-
-  //   }).catch((err) => {
-  //     console.log(err)
-  //   })
-
-  // }
+  
   loadMorePosts(event){
    
     firebase.firestore().collection('posts').orderBy("created","desc").startAfter(this.cursor).limit(this.pageSize).get()
@@ -86,6 +63,7 @@ export class FeedPage {
       console.log(this.posts)
       if (docs.size < this.pageSize) {
         event.enable(false)
+        this.infiniteEvent = event;
       }else{
         //tell the loading is complete
         event.complete()
@@ -98,6 +76,17 @@ export class FeedPage {
       console.log(err)
     })
   }
+
+  refresh(event){
+    this.posts = [];
+    this.getPosts();
+    if (this.infiniteEvent) {
+      this.infiniteEvent.enable(true);
+    }
+    
+    event.complete();
+  }
+
   post(){
     console.log('post')
     firebase.firestore().collection('posts').add({

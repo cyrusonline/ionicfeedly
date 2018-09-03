@@ -177,10 +177,13 @@ export class FeedPage {
       let loading = this.loadingCtrl.create({
         content:"Uploading image"
       })
+      loading.present();
       let ref = firebase.storage().ref("postImage/"+name);
       let uploadTask = ref.putString(this.image.split(',')[1],"base64")
-      uploadTask.on("state_changed",(taskSnapshot)=>{
+      uploadTask.on("state_changed",(taskSnapshot:any)=>{
         console.log(taskSnapshot)
+        let percentage = taskSnapshot.bytesTransferred/taskSnapshot.totalBytes*100;
+        loading.setContent(`Uploaded ${percentage} %`)
       },err=>{
         console.log(err)
       },()=>{
@@ -189,11 +192,14 @@ export class FeedPage {
           firebase.firestore().collection("posts").doc(name).update({
             image:url
           }).then(()=>{
+            loading.dismiss()
             resolve()
           }).catch(err=>{
+            loading.dismiss()
             reject()
           })
         }).catch(err=>{
+          loading.dismiss()
           reject()
         })
       })

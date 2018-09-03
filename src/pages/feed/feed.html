@@ -3,7 +3,7 @@
   <ion-navbar color="danger">
     <ion-title>feeds</ion-title>
     <ion-buttons end>
-      <button ion-button icon-only clear>
+      <button ion-button icon-only clear (click)="logout()">
         <ion-icon name="log-out"></ion-icon>
       </button>
     </ion-buttons>
@@ -15,7 +15,7 @@
 
 <ion-content >
   <ion-row margin class="rowStyle">
-    <button ion-button icon-only color="danger" clear>
+    <button ion-button icon-only color="danger" clear (click)="addPhoto()">
       <ion-icon name="images"></ion-icon>
     </button>
     <ion-input type="text" placeholder="Say something..." [(ngModel)]="text"></ion-input>
@@ -23,6 +23,13 @@
       <ion-icon name="send" ></ion-icon>
     </button>
   </ion-row>
+  <ion-row margin class="rowStyle" *ngIf="image">
+    <ion-card class="round-corners">
+      <img [src]="image" class="round-corners">
+    </ion-card>
+
+  </ion-row>
+
   <ion-refresher (ionRefresh)="refresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -34,6 +41,7 @@
     <ion-item text-wrap>
      {{post.data().text}}
     </ion-item>
+    <img [src]="post.data().image" *ngIf="post.data().image">
     <ion-row class="bottom-bar">
       <ion-col>
         <button ion-button block icon-left small clear color="danger" class="border-right">

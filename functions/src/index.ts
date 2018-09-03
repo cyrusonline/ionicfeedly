@@ -17,7 +17,20 @@ export const updateLikesCount = functions.https.onRequest((request,response)=>{
     admin.firestore().collection("posts").doc(postId).get().then((data)=>{
         let likesCount = data.data().likesCount || 0;
         let likes = data.data().likes || [];
+        let updateData = {};
+        if (action == "like") {
+            updateData["likesCount"] = ++likesCount;
+            updateData[`likes.${userId}`] = true;
+        }else{
+            updateData["likesCount"] = ++likesCount;
+            updateData[`likes.${userId}`] = true;
+        }
 
+        admin.firestore().collection("posts").doc(postId).update(updateData).then(()=>{
+            response.status(200).send("Done")
+        }).catch(err=>{
+            response.status(err.code).send(err.message);
+        })
 
     })
 })
